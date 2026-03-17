@@ -1,19 +1,20 @@
 const express = require('express');
+const path = require('path');
 require('dotenv').config();
 
-const fileRoutes = require('./routes/fileRoutes');
-const storageRoutes = require('./routes/storageRoutes');
+const fileRoutes = require('../src/routes/fileRoutes');
+const storageRoutes = require('../src/routes/storageRoutes');
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
 
-app.use('/users', require('./routes/userRoutes'));
+app.use('/users', require('../src/routes/userRoutes'));
 app.use('/users/:user_id/files', fileRoutes);
 app.use('/users/:user_id/storage-summary', storageRoutes);
 
