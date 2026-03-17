@@ -6,14 +6,10 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "^/(.*\\.(html|css|js|png|jpg|jpeg|gif|ico|svg))$",
-      "dest": "/public/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "src/index.js"
+      "source": "/(.*)",
+      "destination": "/src/index.js"
     }
   ]
 }

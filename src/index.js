@@ -9,9 +9,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-const path = require('path');
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/login.html'));
+  res.redirect('/login.html');
 });
 
 app.use('/users', require('./routes/userRoutes'));
