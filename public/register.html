@@ -3,42 +3,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register</title>
+  <title>Register - Cloud Storage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 520px; margin: 2rem auto; padding: 1rem; }
-    label { display: block; margin-top: 1rem; }
-    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; }
-    button { margin-top: 1rem; padding: 0.6rem 1.2rem; }
-    pre { background: #f5f5f5; padding: 1rem; border-radius: 6px; }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body>
-  <h1>Register</h1>
-  <form id="register" action="/users/register" method="post">
-    <label>
-      Username
-      <input name="username" required autocomplete="username" />
-    </label>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen relative overflow-hidden">
+  <!-- Gradient Backgrounds for premium feel -->
+  <div class="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-blob"></div>
+  <div class="absolute bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-purple-400 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 animate-blob animation-delay-2000"></div>
 
-    <label>
-      Email
-      <input name="email" type="email" required autocomplete="email" />
-    </label>
+  <div class="bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-xl w-full max-w-md relative z-10 border border-white/20 transition-all hover:shadow-2xl hover:-translate-y-1 duration-300">
+    <div class="relative z-10 text-center mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl mb-5 shadow-lg shadow-blue-500/30">
+        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Create Account</h1>
+      <p class="text-gray-500 mt-2 font-medium">Join Cloud Storage to manage your files</p>
+    </div>
 
-    <label>
-      Password
-      <input name="password" type="password" required autocomplete="new-password" />
-    </label>
+    <div id="error-message" class="hidden mb-5 p-4 bg-red-50/80 backdrop-blur-sm transition-all border border-red-100 text-red-700 rounded-xl text-sm text-center font-medium shadow-sm"></div>
+    <div id="success-message" class="hidden mb-5 p-4 bg-green-50/80 backdrop-blur-sm transition-all border border-green-100 text-green-700 rounded-xl text-sm text-center font-medium shadow-sm"></div>
 
-    <button type="submit">Register</button>
-  </form>
+    <form id="register-form" class="relative z-10 space-y-5">
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700 ml-1">Username</label>
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <input name="username" type="text" required autocomplete="username" 
+            class="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all duration-200 shadow-sm" 
+            placeholder="johndoe" />
+        </div>
+      </div>
 
-  <p>
-    Already registered? <a href="/login.html">Login</a>
-  </p>
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700 ml-1">Email</label>
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <input name="email" type="email" required autocomplete="email" 
+            class="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all duration-200 shadow-sm" 
+            placeholder="you@example.com" />
+        </div>
+      </div>
 
-  <p>
-    After submitting, check your browser's developer tools Network tab for the JSON response.
-  </p>
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700 ml-1">Password</label>
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <input name="password" type="password" required autocomplete="new-password" 
+            class="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all duration-200 shadow-sm" 
+            placeholder="••••••••" />
+        </div>
+      </div>
+
+      <button type="submit" 
+        class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 flex justify-center items-center gap-2 group">
+        <span>Create Account</span>
+        <svg class="w-4 h-4 translate-x-0 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </form>
+
+    <p class="relative z-10 mt-8 text-center text-sm text-gray-600">
+      Already registered? <a href="/login.html" class="text-blue-600 hover:text-indigo-600 font-bold transition-colors hover:underline underline-offset-4 decoration-2">Sign in here</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const errorDiv = document.getElementById('error-message');
+      const successDiv = document.getElementById('success-message');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const btnSpan = submitBtn.querySelector('span');
+      
+      errorDiv.classList.add('hidden');
+      successDiv.classList.add('hidden');
+      submitBtn.disabled = true;
+      btnSpan.textContent = 'Creating account...';
+      submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          successDiv.textContent = 'Registration successful! Redirecting to login...';
+          successDiv.classList.remove('hidden');
+          setTimeout(() => {
+            window.location.href = '/login.html';
+          }, 1500);
+        } else {
+          throw new Error(result.message || 'Registration failed');
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+        submitBtn.disabled = false;
+        btnSpan.textContent = 'Create Account';
+        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+    });
+  </script>
 </body>
 </html>

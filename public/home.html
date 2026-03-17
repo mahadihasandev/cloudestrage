@@ -5,31 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Cloud Storage</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .stagger-1 { animation-delay: 100ms; }
+        .stagger-2 { animation-delay: 200ms; }
+        .stagger-3 { animation-delay: 300ms; }
+        .stagger-4 { animation-delay: 400ms; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen">
+<body class="bg-gray-50/50 text-gray-800 min-h-screen relative">
+    <!-- Decorative subtle background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] bg-blue-100/50 rounded-full blur-[120px]"></div>
+        <div class="absolute top-[40%] -left-[10%] w-[40%] h-[40%] bg-purple-100/40 rounded-full blur-[100px]"></div>
+    </div>
+
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav class="glass-header sticky top-0 z-50 transition-all duration-300 shadow-sm/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <div class="flex-shrink-0 flex items-center">
-                    <svg class="h-8 w-8 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
-                    </svg>
-                    <span class="text-xl font-bold text-gray-900">CloudStorage</span>
+                <div class="flex-shrink-0 flex items-center group cursor-pointer transition-transform duration-200 hover:scale-105">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20 mr-3">
+                        <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">CloudSpace</span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span id="welcome-message" class="text-sm font-medium text-gray-700 hidden sm:block"></span>
-                    <button id="logout-btn" class="text-sm text-gray-500 hover:text-gray-900 font-medium px-3 py-2 rounded-md transition-colors hover:bg-gray-100">
-                        Logout
+                <div class="flex items-center gap-5">
+                    <div class="hidden sm:flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shadow-inner border border-blue-200/50" id="user-avatar">U</div>
+                        <span id="welcome-message" class="text-sm font-semibold text-gray-700"></span>
+                    </div>
+                    <div class="h-6 w-px bg-gray-200 hidden sm:block"></div>
+                    <button id="logout-btn" class="flex items-center gap-2 text-sm text-gray-500 hover:text-red-600 font-semibold px-3 py-2 rounded-lg transition-all hover:bg-red-50">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span class="hidden sm:inline">Logout</span>
                     </button>
                 </div>
             </div>
@@ -39,12 +85,12 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         <!-- Dashboard Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 opacity-0 animate-fade-in-up stagger-1">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Your Dashboard</h1>
-                <p class="text-sm text-gray-500 mt-1">Manage your files and monitor storage usage.</p>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">My Storage</h1>
+                <p class="text-sm text-gray-500 mt-1.5 font-medium">Manage and organize your files efficiently.</p>
             </div>
-            <button onclick="document.getElementById('file-input').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+            <button onclick="document.getElementById('file-input').click()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
@@ -53,67 +99,103 @@
             <input type="file" id="file-input" class="hidden" onchange="handleFileUpload(event)">
         </div>
 
-        <div id="upload-status" class="hidden rounded-md p-4 mb-4 text-sm font-medium"></div>
+        <div id="upload-status" class="hidden rounded-xl p-4 mb-4 text-sm font-semibold shadow-sm backdrop-blur-md transition-all"></div>
 
         <!-- Storage Summary Widget -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-                <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                    </svg>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-0 animate-fade-in-up stagger-2">
+            <!-- Used Storage -->
+            <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100/50 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-blue-500/5 rounded-bl-[100px] -z-10 transition-transform group-hover:scale-110"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500">Storage Used</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Storage Used</p>
-                    <p class="text-2xl font-bold text-gray-900" id="storage-used">Loading...</p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-bold tracking-tight text-gray-900" id="storage-used">...</p>
                 </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-                <div class="bg-green-50 p-3 rounded-lg text-green-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Storage Remaining</p>
-                    <p class="text-2xl font-bold text-gray-900" id="storage-remaining">Loading...</p>
+                <!-- Progress bar mock representation -->
+                <div class="w-full bg-gray-100 rounded-full h-1.5 mt-4 overflow-hidden">
+                    <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: 0%" id="storage-progress"></div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-                <div class="bg-purple-50 p-3 rounded-lg text-purple-600">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
+            <!-- Remaining Storage -->
+            <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100/50 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-emerald-500/5 rounded-bl-[100px] -z-10 transition-transform group-hover:scale-110"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500">Available Space</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Active Files</p>
-                    <p class="text-2xl font-bold text-gray-900" id="active-files-count">Loading...</p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-bold tracking-tight text-gray-900" id="storage-remaining">...</p>
+                </div>
+                <p class="text-xs text-emerald-600 font-medium mt-4 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Plenty of room to grow
+                </p>
+            </div>
+
+            <!-- Active Files -->
+            <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100/50 p-6 relative overflow-hidden group hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div class="absolute right-0 top-0 w-24 h-24 bg-purple-500/5 rounded-bl-[100px] -z-10 transition-transform group-hover:scale-110"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-inner group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-500">Total Files</p>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-bold tracking-tight text-gray-900" id="active-files-count">...</p>
+                    <span class="text-sm text-gray-500 font-medium">items</span>
                 </div>
             </div>
         </div>
 
         <!-- Files List -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-6 py-5 border-b border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-900">Your Files</h3>
+        <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100/80 overflow-hidden opacity-0 animate-fade-in-up stagger-3">
+            <div class="px-6 py-5 border-b border-gray-100/80 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path></svg>
+                    Recent Files
+                </h3>
             </div>
             
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50/50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File Name</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded Date</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">File Details</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Size</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date Added</th>
+                            <th scope="col" class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Manage</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="files-list">
+                    <tbody class="bg-white divide-y divide-gray-100" id="files-list">
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
-                                Loading your files...
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="inline-flex flex-col items-center justify-center">
+                                    <svg class="w-10 h-10 text-gray-300 mb-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="text-sm font-medium text-gray-500">Loading your space...</span>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -131,6 +213,9 @@
         const user = JSON.parse(userStr);
         
         document.getElementById('welcome-message').innerText = `Hello, ${user.username}`;
+        if(user.username) {
+            document.getElementById('user-avatar').innerText = user.username.charAt(0).toUpperCase();
+        }
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('user');
@@ -138,18 +223,59 @@
         });
 
         // -- 2. Formatting Utilities --
-        function formatBytes(bytes, decimals = 2) {
+        function formatBytes(bytes, decimals = 1) {
+            if (!+bytes) return '0 B';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} <span class="text-sm text-gray-500 font-medium">${sizes[i]}</span>`;
+        }
+        function formatBytesRaw(bytes, decimals = 2) {
             if (!+bytes) return '0 Bytes';
             const k = 1024;
             const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
         }
 
         function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
+            const date = new Date(dateString);
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            return `
+                <div class="text-sm font-medium text-gray-900">${date.toLocaleDateString(undefined, options)}</div>
+                <div class="text-xs font-medium text-gray-500 mt-0.5">${date.toLocaleTimeString(undefined, timeOptions)}</div>
+            `;
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const colors = {
+                pdf: 'bg-red-50 text-red-600',
+                doc: 'bg-blue-50 text-blue-600',
+                docx: 'bg-blue-50 text-blue-600',
+                xls: 'bg-emerald-50 text-emerald-600',
+                xlsx: 'bg-emerald-50 text-emerald-600',
+                png: 'bg-purple-50 text-purple-600',
+                jpg: 'bg-purple-50 text-purple-600',
+                jpeg: 'bg-purple-50 text-purple-600',
+                zip: 'bg-amber-50 text-amber-600',
+                rar: 'bg-amber-50 text-amber-600',
+                mp4: 'bg-pink-50 text-pink-600',
+                mp3: 'bg-indigo-50 text-indigo-600',
+                default: 'bg-gray-100 text-gray-600'
+            };
+            const colClass = colors[ext] || colors.default;
+
+            return `
+                <div class="w-10 h-10 rounded-xl ${colClass} flex items-center justify-center flex-shrink-0 shadow-sm border border-white/50">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            `;
         }
 
         // -- 3. API Calls --
@@ -159,9 +285,16 @@
                 if (!response.ok) throw new Error('Failed to fetch summary');
                 const data = await response.json();
                 
-                document.getElementById('storage-used').innerText = formatBytes(data.used_bytes);
-                document.getElementById('storage-remaining').innerText = formatBytes(data.remaining_bytes);
+                document.getElementById('storage-used').innerHTML = formatBytes(data.used_bytes);
+                document.getElementById('storage-remaining').innerHTML = formatBytes(data.remaining_bytes);
                 document.getElementById('active-files-count').innerText = data.active_file_count;
+
+                // Simple progress bar mock calculation for visual purposes
+                const totalEstimated = data.used_bytes + data.remaining_bytes || 1; // avoid division by 0
+                const percent = Math.min((data.used_bytes / totalEstimated) * 100, 100);
+                setTimeout(() => {
+                    document.getElementById('storage-progress').style.width = `${Math.max(2, percent)}%`;
+                }, 100);
             } catch (error) {
                 console.error('Error fetching summary:', error);
             }
@@ -179,8 +312,17 @@
                 if (files.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
-                                No files uploaded yet. Click "Upload File" to get started.
+                            <td colspan="4" class="px-6 py-16 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 border border-blue-100">
+                                        <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-base font-bold text-gray-900">No files yet</h3>
+                                    <p class="text-sm font-medium text-gray-500 mt-1 mb-4">Get started by uploading your first file.</p>
+                                    <button onclick="document.getElementById('file-input').click()" class="bg-blue-50 text-blue-600 font-semibold px-4 py-2 text-sm rounded-lg hover:bg-blue-100 transition-colors">Upload File</button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -189,25 +331,29 @@
 
                 files.forEach(file => {
                     const row = document.createElement('tr');
-                    row.className = 'hover:bg-gray-50 transition-colors';
+                    row.className = 'hover:bg-blue-50/30 transition-colors duration-200 group border-b border-gray-50 last:border-0';
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-sm font-medium text-gray-900">${file.file_name}</span>
+                            <div class="flex items-center gap-4">
+                                ${getFileIcon(file.file_name)}
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">${file.file_name}</div>
+                                    <div class="text-xs font-medium text-gray-400 mt-0.5 truncate max-w-[200px]" title="${file.file_hash || 'No hash'}">Hash: ${file.file_hash ? file.file_hash.substring(0,8)+'...' : 'N/A'}</div>
+                                </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${formatBytes(file.file_size_bytes)}
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200/50">
+                                ${formatBytesRaw(file.file_size_bytes)}
+                            </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td class="px-6 py-4 whitespace-nowrap">
                             ${formatDate(file.created_at)}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onclick="deleteFile(${file.id})" class="text-red-600 hover:text-red-900 hover:bg-red-50 px-3 py-1.5 rounded transition-colors">
-                                Delete
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <button onclick="deleteFile(${file.id})" class="text-red-500 hover:text-white border border-red-200 hover:bg-red-500 hover:border-transparent px-3 py-1.5 rounded-lg transition-all focus:ring-2 focus:ring-red-200 font-semibold shadow-sm flex items-center gap-1.5 ml-auto opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                <span>Delete</span>
                             </button>
                         </td>
                     `;
@@ -217,8 +363,10 @@
                 console.error('Error fetching files:', error);
                 document.getElementById('files-list').innerHTML = `
                     <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-sm text-red-500">
-                            Failed to load files. Please refresh the page.
+                        <td colspan="4" class="px-6 py-8 text-center">
+                            <div class="text-sm font-semibold text-red-600 bg-red-50 p-4 rounded-xl inline-block border border-red-100">
+                                Failed to load files. Please refresh the page.
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -226,7 +374,7 @@
         }
 
         async function deleteFile(fileId) {
-            if (!confirm('Are you sure you want to delete this file?')) return;
+            if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) return;
 
             try {
                 const response = await fetch(`/users/${user.id}/files/${fileId}`, {
@@ -238,7 +386,7 @@
                     throw new Error(error.message || 'Failed to delete file');
                 }
 
-                showNotification('File deleted successfully', 'success');
+                showNotification('File moved to trash', 'success');
                 refreshDashboard();
             } catch (error) {
                 console.error('Error deleting file:', error);
@@ -246,7 +394,6 @@
             }
         }
 
-        // Basic client-side hash generator for demo purposes
         async function generateHash(file) {
             const arrayBuffer = await file.arrayBuffer();
             const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
@@ -258,11 +405,10 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // Reset input so the same file can be selected again if needed
             event.target.value = '';
 
             try {
-                showNotification(`Uploading ${file.name}...`, 'info');
+                showNotification(`Uploading "${file.name}"...`, 'info', true);
                 
                 const file_hash = await generateHash(file);
                 
@@ -284,7 +430,7 @@
                     throw new Error(result.message || 'Upload failed');
                 }
 
-                showNotification('File uploaded successfully', 'success');
+                showNotification('File uploaded successfully!', 'success');
                 refreshDashboard();
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -292,23 +438,38 @@
             }
         }
 
-        function showNotification(message, type) {
+        function showNotification(message, type, sticky = false) {
             const statusDiv = document.getElementById('upload-status');
-            statusDiv.textContent = message;
-            statusDiv.className = 'rounded-md p-4 mb-4 text-sm font-medium block';
             
-            if (type === 'success') {
-                statusDiv.classList.add('bg-green-50', 'text-green-800', 'border', 'border-green-200');
+            // Icon based on type
+            let icon = '';
+            if(type === 'success') {
+                icon = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
             } else if (type === 'error') {
-                statusDiv.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
+                icon = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
             } else {
-                statusDiv.classList.add('bg-blue-50', 'text-blue-800', 'border', 'border-blue-200');
+                icon = `<svg class="w-5 h-5 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`;
             }
 
-            setTimeout(() => {
-                statusDiv.classList.add('hidden');
-                statusDiv.className = 'hidden'; // reset
-            }, 5000);
+            statusDiv.innerHTML = `<div class="flex items-center">${icon}${message}</div>`;
+            statusDiv.className = 'rounded-xl p-4 mb-4 text-sm font-semibold shadow-sm backdrop-blur-md transition-all block animate-fade-in-up';
+            
+            if (type === 'success') {
+                statusDiv.classList.add('bg-emerald-50/90', 'text-emerald-800', 'border', 'border-emerald-200');
+            } else if (type === 'error') {
+                statusDiv.classList.add('bg-red-50/90', 'text-red-800', 'border', 'border-red-200');
+            } else {
+                statusDiv.classList.add('bg-blue-50/90', 'text-blue-800', 'border', 'border-blue-200');
+            }
+
+            if(window.notificationTimeout) clearTimeout(window.notificationTimeout);
+
+            if(!sticky) {
+                window.notificationTimeout = setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                    statusDiv.className = 'hidden'; // reset classes
+                }, 4000);
+            }
         }
 
         function refreshDashboard() {
