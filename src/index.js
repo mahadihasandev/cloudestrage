@@ -9,7 +9,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-app.get('/', (req, res) => res.json({ status: 'ok' }));
+const path = require('path');
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/login.html'));
+});
 
 app.use('/users', require('./routes/userRoutes'));
 app.use('/users/:user_id/files', fileRoutes);
