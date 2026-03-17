@@ -15,8 +15,8 @@ A small backend service that simulates a cloud file storage system with per-user
    - Created `files` table to store file metadata per user.
 
 3. **User registration / login (basic)**
-   - Added `POST /users` to create a user.
-   - (No auth required; login is not enforced but an endpoint could be added if needed.)
+   - Added `POST /users/register` to create a user with `username`, `email`, and `password`.
+   - Added `POST /users/login` to authenticate with `email` and `password`.
 
 4. **File upload + quota enforcement**
    - Added `POST /users/:user_id/files` to register a file.
@@ -79,6 +79,8 @@ psql -U postgres -d cloudstorage -c "\
 CREATE TABLE users (\
   id SERIAL PRIMARY KEY,\
   username TEXT NOT NULL UNIQUE,\
+  email TEXT NOT NULL UNIQUE,\
+  password_hash TEXT NOT NULL,\
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()\
 );\
 "
@@ -96,7 +98,7 @@ CREATE TABLE files (\
 );\
 "
 
-psql -U postgres -d cloudstorage -c "INSERT INTO users (username) VALUES ('User 1'), ('User 2'), ('User 3');"
+psql -U postgres -d cloudstorage -c "INSERT INTO users (username, email, password_hash) VALUES ('User 1', 'user1@example.com', '$2b$10$S8apK48QjnwPUWApl/Pi3ez/epDIQ2mpWtW2xxSCJ45kbMisAZzo6'), ('User 2', 'user2@example.com', '$2b$10$S8apK48QjnwPUWApl/Pi3ez/epDIQ2mpWtW2xxSCJ45kbMisAZzo6'), ('User 3', 'user3@example.com', '$2b$10$S8apK48QjnwPUWApl/Pi3ez/epDIQ2mpWtW2xxSCJ45kbMisAZzo6');"
 ```
 
 ### 4) Set environment variables
@@ -125,11 +127,25 @@ npm run dev
 ### User registration
 
 ```
-POST /users
+POST /users/register
 {
-  "username": "user1"
+  "username": "user1",
+  "email": "user1@example.com",
+  "password": "supersecret"
 }
 ```
+
+### User login
+
+```
+POST /users/login
+{
+  "email": "user1@example.com",
+  "password": "supersecret"
+}
+```
+
+You can also use the simple HTML forms at `/register.html` and `/login.html` when running the server.
 
 ### Upload File
 

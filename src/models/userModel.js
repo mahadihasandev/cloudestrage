@@ -8,11 +8,15 @@ function findByUsername(username) {
   return db('users').where({ username }).first();
 }
 
-function create(username) {
+function findByEmail(email) {
+  return db('users').where({ email }).first();
+}
+
+function create({ username, email, passwordHash }) {
   return db('users')
-    .insert({ username })
-    .returning(['id', 'username', 'created_at'])
+    .insert({ username, email, password_hash: passwordHash })
+    .returning(['id', 'username', 'email', 'created_at'])
     .then((rows) => rows[0]);
 }
 
-module.exports = { findById, findByUsername, create };
+module.exports = { findById, findByUsername, findByEmail, create };
