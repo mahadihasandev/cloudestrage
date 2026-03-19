@@ -31,6 +31,7 @@ async function recreateDatabase() {
         file_name TEXT NOT NULL,
         file_size_bytes BIGINT NOT NULL CHECK (file_size_bytes >= 0),
         file_hash TEXT NOT NULL,
+        file_url TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP WITH TIME ZONE NULL,
         UNIQUE (user_id, file_name, deleted_at)

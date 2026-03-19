@@ -4,7 +4,7 @@ function getActiveFiles(userId) {
   return db('files')
     .where({ user_id: userId })
     .whereNull('deleted_at')
-    .select('id', 'file_name', 'file_size_bytes', 'file_hash', 'created_at');
+    .select('id', 'file_name', 'file_size_bytes', 'file_hash', 'file_url', 'created_at');
 }
 
 function getStorageUsage(userId) {
@@ -25,7 +25,7 @@ function createFile(data, trx) {
   const query = trx ? trx('files') : db('files');
   return query
     .insert(data)
-    .returning(['id', 'file_name', 'file_size_bytes', 'file_hash', 'created_at']);
+    .returning(['id', 'file_name', 'file_size_bytes', 'file_hash', 'file_url', 'created_at']);
 }
 
 function markDeleted(fileId) {

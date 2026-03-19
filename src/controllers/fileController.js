@@ -4,15 +4,19 @@ async function upload(req, res, next) {
   try {
     const userId = Number(req.params.user_id);
     const { file_name, file_size_bytes, file_hash } = req.body;
+    
+    // Cloudinary URL is in req.file.path
+    const file_url = req.file ? req.file.path : null;
 
-    if (!file_name || !Number.isFinite(file_size_bytes) || !file_hash) {
+    if (!file_name || !file_size_bytes || !file_hash) {
       return res.status(400).json({ message: 'Missing required file fields' });
     }
 
     const created = await fileService.uploadFile(userId, {
       file_name,
-      file_size_bytes,
+      file_size_bytes: Number(file_size_bytes),
       file_hash,
+      file_url,
     });
 
     res.status(201).json(created);

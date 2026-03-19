@@ -36,6 +36,7 @@ async function uploadFile(userId, payload) {
         file_name: payload.file_name,
         file_size_bytes: payload.file_size_bytes,
         file_hash: payload.file_hash,
+        file_url: payload.file_url,
       },
       trx
     );

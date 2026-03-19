@@ -28,6 +28,16 @@ async function alterDatabaseSchema() {
       altered = true;
     }
 
+    console.log('[INFO] Checking files table columns...');
+    const filesRes = await db.raw("SELECT column_name FROM information_schema.columns WHERE table_name = 'files'");
+    const filesColumns = filesRes.rows.map(row => row.column_name);
+
+    if (!filesColumns.includes('file_url')) {
+      console.log('[INFO] Adding missing column: file_url to files table...');
+      await db.raw("ALTER TABLE files ADD COLUMN file_url TEXT");
+      altered = true;
+    }
+
     if (altered) {
       console.log('[SUCCESS] Table alteration completed successfully.');
     } else {
