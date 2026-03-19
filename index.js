@@ -14,6 +14,20 @@ app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
 
+app.get('/migrate', async (req, res) => {
+  try {
+    const db = require('./src/db');
+    await db.raw('ALTER TABLE files ADD COLUMN file_url TEXT;');
+    res.send('Migration successful! Added file_url column to your Vercel database.');
+  } catch (error) {
+    if (error.message.includes('already exists')) {
+      res.send('Migration already applied! file_url column exists.');
+    } else {
+      res.status(500).send('Migration failed: ' + error.message);
+    }
+  }
+});
+
 app.use('/users', require('./src/routes/userRoutes'));
 app.use('/users/:user_id/files', fileRoutes);
 app.use('/users/:user_id/storage-summary', storageRoutes);
