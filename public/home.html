@@ -523,13 +523,40 @@
             const ext = fileName.split('.').pop().toLowerCase();
             const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
             const videoExts = ['mp4', 'webm', 'ogg'];
+            const textExts = ['txt', 'md', 'json', 'csv', 'js', 'html', 'css', 'env'];
+            
+            // Ensure URL is HTTPS
+            const secureUrl = url.replace(/^http:\/\//i, 'https://');
             
             if (imageExts.includes(ext)) {
-                content.innerHTML = `<img src="${url}" class="max-w-full max-h-full object-contain rounded drop-shadow-md">`;
+                content.innerHTML = `<img src="${secureUrl}" class="max-w-full max-h-full object-contain rounded drop-shadow-md">`;
             } else if (videoExts.includes(ext)) {
-                content.innerHTML = `<video src="${url}" controls autoplay class="max-w-full max-h-full rounded drop-shadow-md outline-none bg-black"></video>`;
+                content.innerHTML = `<video src="${secureUrl}" controls autoplay class="max-w-full max-h-full rounded drop-shadow-md outline-none bg-black"></video>`;
+            } else if (textExts.includes(ext)) {
+                // Fetch text and display it
+                content.innerHTML = `
+                    <div class="w-full h-full flex flex-col bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                        <div class="flex-1 overflow-auto p-4 text-left bg-gray-50/50">
+                            <pre id="text-viewer-content" class="text-sm font-mono text-gray-800 whitespace-pre-wrap">Loading text...</pre>
+                        </div>
+                    </div>
+                `;
+                fetch(secureUrl)
+                    .then(res => res.text())
+                    .then(text => {
+                        const textEl = document.getElementById('text-viewer-content');
+                        if(textEl) textEl.textContent = text;
+                    })
+                    .catch(err => {
+                        const textEl = document.getElementById('text-viewer-content');
+                        if(textEl) textEl.textContent = "Error loading text file.\n" + err.message;
+                    });
             } else if (ext === 'pdf') {
-                content.innerHTML = `<iframe src="${url}" class="w-full h-full rounded border-0" title="${fileName}"></iframe>`;
+                content.innerHTML = `
+                    <object data="${secureUrl}" type="application/pdf" class="w-full h-full rounded border-0 bg-white">
+                        <iframe src="https://docs.google.com/viewer?url=${encodeURIComponent(secureUrl)}&embedded=true" class="w-full h-full rounded border-0" title="${fileName}"></iframe>
+                    </object>
+                `;
             } else {
                 content.innerHTML = `
                     <div class="text-center">
