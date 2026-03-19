@@ -16,3 +16,5 @@ Thumbs.db
 # Optional: editor temp files
 .vscode/
 .idea/
+.vercel
+.env*.local
