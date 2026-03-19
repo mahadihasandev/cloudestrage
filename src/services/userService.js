@@ -23,20 +23,27 @@ async function createUser({ username, email, password }) {
 }
 
 async function login({ email, password }) {
+  console.log(`[AUTH DEBUG] Attempting login for email: "${email}"`);
+  
   const user = await userModel.findByEmail(email);
   if (!user) {
+    console.log(`[AUTH DEBUG] Login failed: User not found in DB for email "${email}"`);
     const err = new Error('Invalid email or password');
     err.status = 401;
     throw err;
   }
 
+  console.log(`[AUTH DEBUG] User found. Comparing password against hash: ${user.password_hash.substring(0, 10)}...`);
   const match = await bcrypt.compare(password, user.password_hash);
+  
   if (!match) {
+    console.log(`[AUTH DEBUG] Login failed: Password mismatch for email "${email}"`);
     const err = new Error('Invalid email or password');
     err.status = 401;
     throw err;
   }
 
+  console.log(`[AUTH DEBUG] Login successful for email "${email}"`);
   const { password_hash, ...safeUser } = user;
   return safeUser;
 }
