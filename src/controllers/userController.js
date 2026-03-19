@@ -8,11 +8,6 @@ async function register(req, res, next) {
     }
 
     const user = await userService.createUser({ username, email, password });
-    // If the request came from an HTML form (or expects HTML), we should redirect
-    if (req.accepts('html')) {
-      return res.redirect('/login.html');
-    }
-    // Otherwise return JSON for API clients
     res.status(201).json(user);
   } catch (err) {
     next(err);
