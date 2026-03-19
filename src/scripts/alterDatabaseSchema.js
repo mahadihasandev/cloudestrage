@@ -34,6 +34,12 @@ async function alterDatabaseSchema() {
       altered = true;
     }
 
+    if (!columns.includes('premium_expires_at')) {
+      console.log('[INFO] Adding missing column: premium_expires_at...');
+      await db.raw("ALTER TABLE users ADD COLUMN premium_expires_at TIMESTAMP");
+      altered = true;
+    }
+
     console.log('[INFO] Checking files table columns...');
     const filesRes = await db.raw("SELECT column_name FROM information_schema.columns WHERE table_name = 'files'");
     const filesColumns = filesRes.rows.map(row => row.column_name);
