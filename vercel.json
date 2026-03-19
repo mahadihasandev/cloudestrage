@@ -12,5 +12,10 @@
       "destination": "/login.html",
       "permanent": false
     }
-  ]
+  ],
+  "env": {
+    "CLOUDINARY_CLOUD_NAME": "dmunk4r1x",
+    "CLOUDINARY_API_KEY": "115722288464774",
+    "CLOUDINARY_API_SECRET": "XSgtAD4T8iCBsz0JZVa6inIUuRI"
+  }
 }
