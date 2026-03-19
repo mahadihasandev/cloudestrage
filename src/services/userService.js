@@ -48,4 +48,22 @@ async function login({ email, password }) {
   return safeUser;
 }
 
-module.exports = { createUser, login };
+async function upgradeStorage(userId, trxId) {
+  // In a real application with the bKash Merchant API, we would verify the trxId here.
+  // Since this is a personal gateway, we auto-grant 1GB immediately upon submisson.
+  console.log(`[PAYMENT DEBUG] Upgrading storage for user ${userId} with TrxID: ${trxId}`);
+  
+  const additionalBytes = 1 * 1024 * 1024 * 1024; // 1 GB
+  const updatedUser = await userModel.addStorage(userId, additionalBytes);
+  
+  if (!updatedUser) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+  
+  const { password_hash, ...safeUser } = updatedUser;
+  return { user: safeUser, addedBytes: additionalBytes };
+}
+
+module.exports = { createUser, login, upgradeStorage };

@@ -20,10 +20,14 @@ async function getStorageSummary(userId) {
     .count('* as count')
     .then((r) => Number(r[0].count));
 
+  const user = await db('users').where({ id: userId }).first();
+  const limit = user && user.storage_limit_bytes ? Number(user.storage_limit_bytes) : 524288000;
+
   return {
     used_bytes: used,
-    remaining_bytes: Math.max(0, STORAGE_LIMIT_BYTES - used),
+    remaining_bytes: Math.max(0, limit - used),
     active_file_count: count,
+    total_limit: limit
   };
 }
 

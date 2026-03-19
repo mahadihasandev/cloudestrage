@@ -2,7 +2,7 @@ const db = require('../db');
 const userModel = require('../models/userModel');
 const fileModel = require('../models/fileModel');
 
-const STORAGE_LIMIT_BYTES = 500 * 1024 * 1024;
+const STORAGE_LIMIT_BYTES = 500 * 1024 * 1024; // Legacy fallback constant
 
 async function uploadFile(userId, payload) {
   return db.transaction(async (trx) => {
@@ -24,7 +24,9 @@ async function uploadFile(userId, payload) {
     const used = Number(usedResult[0].used || 0);
     const newUsed = used + Number(payload.file_size_bytes);
 
-    if (newUsed > STORAGE_LIMIT_BYTES) {
+    const limit = user && user.storage_limit_bytes ? Number(user.storage_limit_bytes) : 524288000;
+
+    if (newUsed > limit) {
       const err = new Error('Storage limit exceeded');
       err.status = 400;
       throw err;

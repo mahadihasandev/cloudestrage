@@ -33,4 +33,25 @@ async function login(req, res, next) {
   }
 }
 
-module.exports = { register, login };
+async function upgrade(req, res, next) {
+  try {
+    const userId = Number(req.params.user_id);
+    const { trxId } = req.body;
+    
+    if (!trxId) {
+      return res.status(400).json({ message: 'bKash Transaction ID (TrxID) is required.' });
+    }
+
+    const { user, addedBytes } = await userService.upgradeStorage(userId, trxId);
+    
+    res.json({
+      message: 'Storage upgraded successfully!',
+      user,
+      addedBytes
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { register, login, upgrade };

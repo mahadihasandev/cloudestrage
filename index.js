@@ -17,11 +17,12 @@ app.get('/', (req, res) => {
 app.get('/migrate', async (req, res) => {
   try {
     const db = require('./src/db');
-    await db.raw('ALTER TABLE files ADD COLUMN file_url TEXT;');
-    res.send('Migration successful! Added file_url column to your Vercel database.');
+    await db.raw('ALTER TABLE files ADD COLUMN IF NOT EXISTS file_url TEXT;');
+    await db.raw('ALTER TABLE users ADD COLUMN IF NOT EXISTS storage_limit_bytes BIGINT DEFAULT 524288000;');
+    res.send('Migration successful! Added new columns to your Vercel database.');
   } catch (error) {
     if (error.message.includes('already exists')) {
-      res.send('Migration already applied! file_url column exists.');
+      res.send('Migration already applied or partial success. Check your app.');
     } else {
       res.status(500).send('Migration failed: ' + error.message);
     }
