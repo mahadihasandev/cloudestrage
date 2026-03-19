@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const connectionConfig = process.env.DATABASE_URL 
   ? {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: process.env.DATABASE_URL.replace(/(sslmode=)(require|prefer|verify-ca)/, '$1verify-full'),
       ssl: { rejectUnauthorized: false }
     }
   : {
