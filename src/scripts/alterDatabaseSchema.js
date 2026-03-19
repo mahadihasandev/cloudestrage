@@ -28,6 +28,12 @@ async function alterDatabaseSchema() {
       altered = true;
     }
 
+    if (!columns.includes('storage_limit_bytes')) {
+      console.log('[INFO] Adding missing column: storage_limit_bytes...');
+      await db.raw("ALTER TABLE users ADD COLUMN storage_limit_bytes BIGINT DEFAULT 524288000");
+      altered = true;
+    }
+
     console.log('[INFO] Checking files table columns...');
     const filesRes = await db.raw("SELECT column_name FROM information_schema.columns WHERE table_name = 'files'");
     const filesColumns = filesRes.rows.map(row => row.column_name);
