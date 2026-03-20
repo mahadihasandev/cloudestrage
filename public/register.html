@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register - Cloud Storage</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -81,6 +82,14 @@
       </button>
     </form>
 
+    <div class="my-6 flex items-center gap-3">
+      <div class="flex-1 h-px bg-gray-200"></div>
+      <span class="text-sm text-gray-400 font-medium">or continue with</span>
+      <div class="flex-1 h-px bg-gray-200"></div>
+    </div>
+
+    <div id="google-register-btn" class="w-full flex justify-center"></div>
+
     <p class="relative z-10 mt-8 text-center text-sm text-gray-600">
       Already registered? <a href="/login.html" class="text-blue-600 hover:text-indigo-600 font-bold transition-colors hover:underline underline-offset-4 decoration-2">Sign in here</a>
     </p>
@@ -131,6 +140,49 @@
         submitBtn.disabled = false;
         btnSpan.textContent = 'Create Account';
         submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+      }
+    });
+
+    async function handleGoogleRegister(response) {
+      const errorDiv = document.getElementById('error-message');
+      const successDiv = document.getElementById('success-message');
+      errorDiv.classList.add('hidden');
+      successDiv.classList.add('hidden');
+      try {
+        const res = await fetch('/users/google-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: response.credential })
+        });
+        const result = await res.json();
+        if (res.ok) {
+          successDiv.textContent = 'Registration successful! Redirecting to login...';
+          successDiv.classList.remove('hidden');
+          setTimeout(() => {
+            window.location.href = '/login.html';
+          }, 1500);
+        } else {
+          throw new Error(result.message || 'Google registration failed');
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    window.addEventListener('load', async () => {
+      if (window.google && window.google.accounts) {
+        const config = await fetch('/api/config').then(r => r.json()).catch(() => ({}));
+        const clientId = config.googleClientId;
+        if (!clientId) return;
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleGoogleRegister
+        });
+        google.accounts.id.renderButton(
+          document.getElementById('google-register-btn'),
+          { theme: 'outline', size: 'large', width: '100%', text: 'signup_with' }
+        );
       }
     });
   </script>

@@ -14,6 +14,10 @@ app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
 
+app.get('/api/config', (req, res) => {
+  res.json({ googleClientId: process.env.GOOGLE_CLIENT_ID || '' });
+});
+
 app.get('/migrate', async (req, res) => {
   try {
     const db = require('./src/db');

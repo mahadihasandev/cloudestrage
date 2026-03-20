@@ -54,4 +54,30 @@ async function upgrade(req, res, next) {
   }
 }
 
-module.exports = { register, login, upgrade };
+module.exports = { register, login, upgrade, googleLogin, googleRegister };
+
+async function googleLogin(req, res, next) {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: 'Google credential is required' });
+    }
+    const user = await userService.googleLogin({ credential });
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function googleRegister(req, res, next) {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: 'Google credential is required' });
+    }
+    const user = await userService.googleRegister({ credential });
+    res.status(201).json(user);
+  } catch (err) {
+    next(err);
+  }
+}
