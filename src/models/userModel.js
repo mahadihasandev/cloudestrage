@@ -27,4 +27,15 @@ function addStorage(id, bytesToAdd) {
     .then((rows) => rows[0]);
 }
 
-module.exports = { findById, findByUsername, findByEmail, create, addStorage };
+function findByGoogleId(googleId) {
+  return db('users').where({ google_id: googleId }).first();
+}
+
+function createGoogleUser({ username, email, googleId }) {
+  return db('users')
+    .insert({ username, email, google_id: googleId })
+    .returning(['id', 'username', 'email', 'storage_limit_bytes', 'created_at'])
+    .then((rows) => rows[0]);
+}
+
+module.exports = { findById, findByUsername, findByEmail, create, addStorage, findByGoogleId, createGoogleUser };

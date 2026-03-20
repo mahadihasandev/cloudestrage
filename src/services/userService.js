@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
+const { OAuth2Client } = require('google-auth-library');
 const userModel = require('../models/userModel');
 
 const SALT_ROUNDS = 10;
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 async function createUser({ username, email, password }) {
   const existingByUsername = await userModel.findByUsername(username);
@@ -67,3 +69,59 @@ async function upgradeStorage(userId, trxId) {
 }
 
 module.exports = { createUser, login, upgradeStorage };
+
+async function verifyGoogleToken(credential) {
+  const ticket = await googleClient.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  return ticket.getPayload();
+}
+
+async function googleLogin({ credential }) {
+  const payload = await verifyGoogleToken(credential);
+  const { sub: googleId, email, name } = payload;
+
+  let user = await userModel.findByGoogleId(googleId);
+  if (!user) {
+    user = await userModel.findByEmail(email.toLowerCase());
+    if (!user) {
+      const err = new Error('No account found for this Google account. Please register first.');
+      err.status = 404;
+      throw err;
+    }
+  }
+
+  const { password_hash, google_id, ...safeUser } = user;
+  return safeUser;
+}
+
+async function googleRegister({ credential }) {
+  const payload = await verifyGoogleToken(credential);
+  const { sub: googleId, email, name } = payload;
+
+  const existingByGoogleId = await userModel.findByGoogleId(googleId);
+  if (existingByGoogleId) {
+    const err = new Error('An account with this Google account already exists. Please log in instead.');
+    err.status = 409;
+    throw err;
+  }
+
+  const existingByEmail = await userModel.findByEmail(email.toLowerCase());
+  if (existingByEmail) {
+    const err = new Error('An account with this email already exists. Please log in instead.');
+    err.status = 409;
+    throw err;
+  }
+
+  const baseUsername = (name || email.split('@')[0]).replace(/\s+/g, '').toLowerCase();
+  let username = baseUsername;
+  let suffix = 1;
+  while (await userModel.findByUsername(username)) {
+    username = `${baseUsername}${suffix++}`;
+  }
+
+  return userModel.createGoogleUser({ username, email: email.toLowerCase(), googleId });
+}
+
+module.exports = { createUser, login, upgradeStorage, googleLogin, googleRegister };
